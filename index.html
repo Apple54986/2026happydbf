@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>端午立蛋大挑戰</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 初始畫面 -->
+        <div id="start-screen" class="overlay">
+            <div class="content">
+                <h1>端午立蛋大挑戰</h1>
+                <p>左右傾斜手機，將蛋立在正中央！</p>
+                <button id="start-btn">開始挑戰</button>
+                <p class="hint">＊請開啟手機「動作與方向」權限</p>
+            </div>
+        </div>
+
+        <!-- 遊戲主畫面 -->
+        <div id="game-canvas">
+            <div class="dragon-boat-bg"></div>
+            <div class="target-slot"></div> <!-- 蛋框 -->
+            <div id="egg" class="egg">
+                <div class="egg-face">^. <^</div>
+            </div>
+        </div>
+
+        <!-- 成功畫面 -->
+        <div id="success-screen" class="overlay hidden">
+            <div class="content">
+                <div class="funny-egg">💪🥚💪</div>
+                <h2 class="success-title">立蛋成功！</h2>
+                <p class="joke-text">你現在比這顆蛋還要「蛋」定！</p>
+                <p class="blessing">祝福您：端午安康，好運一整年，<br>財源滾滾蛋蛋來！</p>
+                <button onclick="location.reload()">再玩一次</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
