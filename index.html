@@ -3,41 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>端午立蛋大挑戰</title>
-    <link rel="stylesheet" href="style.css">
+    <title>YFY Happiness+ | 端午立蛋大挑戰</title>
+    <style>
+        :root {
+            --mint-green: #e8f5e9;
+            --bamboo-green: #81c784;
+            --sky-blue: #e0f7fa;
+            --accent-gold: #ffd700;
+            --text-dark: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--mint-green) 100%);
+            color: var(--text-dark);
+        }
+
+        /* Abstract Bamboo Background */
+        .bg-leaf {
+            position: absolute;
+            width: 300px;
+            height: 100px;
+            background: rgba(129, 199, 132, 0.1);
+            border-radius: 0 100% 0 100%;
+            transform: rotate(-15deg);
+            z-index: 0;
+        }
+
+        .leaf-1 { top: 10%; left: -50px; }
+        .leaf-2 { bottom: 15%; right: -50px; transform: rotate(165deg); }
+
+        /* UI Elements */
+        #game-ui {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        .timer-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+        }
+
+        /* The Egg and Frame */
+        #stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        #egg-frame {
+            width: 120px;
+            height: 160px;
+            border: 3px dashed var(--bamboo-green);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0.6;
+        }
+
+        #egg {
+            position: absolute;
+            width: 100px;
+            height: 140px;
+            background: #fff;
+            border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            transition: transform 0.05s linear;
+            z-index: 6;
+        }
+
+        /* Overlays */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--bamboo-green);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(129, 199, 132, 0.4);
+            margin-top: 20px;
+        }
+
+        #result-screen { display: none; }
+
+        .result-img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse { animation: pulse 2s infinite ease-in-out; }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <!-- 初始畫面 -->
-        <div id="start-screen" class="overlay">
-            <div class="content">
-                <h1>端午立蛋大挑戰</h1>
-                <p>左右傾斜手機，將蛋立在正中央！</p>
-                <button id="start-btn">開始挑戰</button>
-                <p class="hint">＊請開啟手機「動作與方向」權限</p>
-            </div>
-        </div>
 
-        <!-- 遊戲主畫面 -->
-        <div id="game-canvas">
-            <div class="dragon-boat-bg"></div>
-            <div class="target-slot"></div> <!-- 蛋框 -->
-            <div id="egg" class="egg">
-                <div class="egg-face">^. <^</div>
-            </div>
-        </div>
+    <div class="bg-leaf leaf-1"></div>
+    <div class="bg-leaf leaf-2"></div>
 
-        <!-- 成功畫面 -->
-        <div id="success-screen" class="overlay hidden">
-            <div class="content">
-                <div class="funny-egg">💪🥚💪</div>
-                <h2 class="success-title">立蛋成功！</h2>
-                <p class="joke-text">你現在比這顆蛋還要「蛋」定！</p>
-                <p class="blessing">祝福您：端午安康，好運一整年，<br>財源滾滾蛋蛋來！</p>
-                <button onclick="location.reload()">再玩一次</button>
-            </div>
+    <!-- Start Overlay -->
+    <div id="start-overlay" class="overlay">
+        <h1 style="margin-bottom: 10px;">YFY Happiness+</h1>
+        <h2 style="font-weight: 300; margin-top: 0;">端午立蛋大挑戰</h2>
+        <div style="font-size: 0.9rem; line-height: 1.6; color: #666;">
+            傾斜手機，將雞蛋移至虛線框中心。<br>
+            傳說在端午節立蛋成功，能獲得整年好運！
         </div>
+        <button class="btn pulse" onclick="requestPermissions()">開始挑戰 & 授權感應器</button>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Game UI -->
+    <div id="game-ui">
+        <div class="timer-display">剩餘時間: <span id="timer">10</span>s</div>
+    </div>
+
+    <!-- Stage -->
+    <div id="stage">
+        <div id="egg-frame"></div>
+        <div id="egg">🥚</div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="overlay">
+        <img id="result-image" src="" alt="Result" class="result-img">
+        <div id="result-text" class="result-title"></div>
+        <div id="result-subtext" style="margin-bottom: 20px;"></div>
+        <button class="btn" onclick="shareGame()">[ 分享給好友 ]</button>
+        <button class="btn" style="background: #ccc;" onclick="location.reload()">再玩一次</button>
+    </div>
+
+    <script>
+        // Game Constants & State
+        const TIMER_TOTAL = 10;
+        let timeLeft = TIMER_TOTAL;
+        let gameActive = false;
+        let timerInterval;
+        let startTime;
+
+        // Egg Physics State
+        let eggPos = { x: 0, y: 0 };
+        let eggVel = { x: 0, y: 0 };
+        const friction = 0.92;
+        const sensitivity = 0.5;
+        const targetRadius = 40; // Success threshold in px
+
+        // DOM Elements
+        const eggEl = document.getElementById('egg');
+        const timerEl = document.getElementById('timer');
+        const startOverlay = document.getElementById('start-overlay');
+        const resultScreen = document.getElementById('result-screen');
+        const resultImg = document.getElementById('result-image');
+        const resultText = document.getElementById('result-text');
+        const resultSubtext = document.getElementById('result-subtext');
+
+        // 1. Permission Handling for iOS
+        function requestPermissions() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response === 'granted') {
+                            startGame();
+                        } else {
+                            alert('需要感應器權限才能遊玩喔！');
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Non-iOS or older iOS
+                startGame();
+            }
+        }
+
+        // 2. Game Start
+        function startGame() {
+            startOverlay.style.display = 'none';
+            gameActive = true;
+            startTime = Date.now();
+            
+            // Random start position
+            const side = Math.random() > 0.5 ? 1 : -1;
+            eggPos.x = side * (window.innerWidth / 3);
+            eggPos.y = side * (window.innerHeight / 3);
+
+            window.addEventListener('deviceorientation', handleOrientation);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) endGame(false);
+            }, 1000);
+
+            updatePhysics();
+        }
+
+        // 3. Physics Loop
+        function handleOrientation(event) {
+            if (!gameActive) return;
+            // Gamma: Left/Right (-90 to 90)
+            // Beta: Front/Back (-180 to 180)
+            eggVel.x += event.gamma * sensitivity;
+            eggVel.y += event.beta * sensitivity;
+        }
+
+        function updatePhysics() {
+            if (!gameActive) return;
+
+            eggVel.x *= friction;
+            eggVel.y *= friction;
+            eggPos.x += eggVel.x * 0.1;
+            eggPos.y += eggVel.y * 0.1;
+
+            // Boundaries
+            const limitX = window.innerWidth / 2 - 50;
+            const limitY = window.innerHeight / 2 - 70;
+            if (Math.abs(eggPos.x) > limitX) eggPos.x = Math.sign(eggPos.x) * limitX;
+            if (Math.abs(eggPos.y) > limitY) eggPos.y = Math.sign(eggPos.y) * limitY;
+
+            // Apply Visuals
+            eggEl.style.transform = `translate(${eggPos.x}px, ${eggPos.y}px)`;
+
+            // Check Success Condition (Egg is at center frame)
+            const dist = Math.sqrt(eggPos.x * eggPos.x + eggPos.y * eggPos.y);
+            if (dist < 15) {
+                endGame(true);
+            } else {
+                requestAnimationFrame(updatePhysics);
+            }
+        }
+
+        // 4. End Game Logic
+        function endGame(success) {
+            gameActive = false;
+            clearInterval(timerInterval);
+            window.removeEventListener('deviceorientation', handleOrientation);
+
+            const duration = (Date.now() - startTime) / 1000;
+
+            if (success) {
+                resultScreen.style.display = 'flex';
+                if (duration <= 5) {
+                    // FAST CLEAR
+                    resultImg.src = './eggcalm.jpg';
+                    resultText.innerText = "立蛋大神是你！";
+                    resultSubtext.innerText = "你是究極立蛋淡定大師！";
+                } else {
+                    // SLOW CLEAR
+                    resultImg.src = './loosegg.jpg';
+                    resultText.innerText = "立蛋成功！";
+                    resultSubtext.innerText = "放假就是要盡情放粽，享受節日！";
+                }
+            } else {
+                // TIMEOUT
+                resultScreen.style.display = 'flex';
+                resultText.innerText = "哎呀，蛋倒了！";
+                resultSubtext.innerText = "別灰心，端午靈氣還在，再試一次吧！";
+                resultImg.style.display = 'none';
+            }
+        }
+
+        // 5. Sharing Logic
+        function shareGame() {
+            const shareData = {
+                title: 'YFY Happiness+ 端午立蛋大挑戰',
+                text: '我剛完成了端午立蛋挑戰！快來看看你的平衡感好不好？',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => copyToClipboard());
+            } else {
+                copyToClipboard();
+            }
+        }
+
+        function copyToClipboard() {
+            const el = document.createElement('textarea');
+            el.value = window.location.href;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('網址已複製，快分享給 LINE 好友吧！');
+        }
+
+        // Prevent scrolling in LINE browser
+        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+    </script>
 </body>
 </html>
