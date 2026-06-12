@@ -284,17 +284,30 @@
             <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
         </div>
 
-        <!-- River and Dragon Boat -->
+       <!-- River and Dragon Boat / Leaf Boat -->
         <div class="river-container">
-            <!-- Simple Minimalist Dragon Boat SVG -->
+            <!-- 調整為粽葉造型的龍舟 -->
             <svg class="dragon-boat" viewBox="0 0 200 60">
-                <path d="M10,40 Q100,60 190,40 L180,30 Q100,45 20,30 Z" fill="#0E6251" /> <!-- Hull -->
-                <path d="M185,45 Q200,10 175,25" fill="none" stroke="#0E6251" stroke-width="4" /> <!-- Head -->
-                <circle cx="188" cy="28" r="2" fill="#ffd700" /> <!-- Eye -->
-                <rect x="50" y="35" width="2" height="15" fill="#81c784" /> <!-- Oars -->
-                <rect x="80" y="35" width="2" height="15" fill="#81c784" />
-                <rect x="110" y="35" width="2" height="15" fill="#81c784" />
+                <!-- 粽葉船身：調整為流線尖頭造型 -->
+                <path d="M5,35 Q100,65 195,35 Q100,45 5,35 Z" fill="#2E7D32" /> 
+                <!-- 葉脈細節：增加一條深色中心線讓它更像葉子 -->
+                <path d="M5,35 Q100,58 195,35" fill="none" stroke="#1B5E20" stroke-width="1" opacity="0.6" />
+                
+                <!-- 龍頭：保留節慶感 -->
+                <path d="M185,40 Q205,5 175,20" fill="none" stroke="#0E6251" stroke-width="4" stroke-linecap="round" /> 
+                <circle cx="190" cy="22" r="1.5" fill="#ffd700" /> <!-- 龍眼 -->
+                
+                <!-- 船槳：稍微傾斜更有划動感 -->
+                <line x1="60" y1="45" x2="55" y2="58" stroke="#81c784" stroke-width="2" />
+                <line x1="90" y1="48" x2="85" y2="61" stroke="#81c784" stroke-width="2" />
+                <line x1="120" y1="48" x2="115" y2="61" stroke="#81c784" stroke-width="2" />
             </svg>
+            
+            <!-- 河流波浪保持不變 -->
+            <svg width="100%" height="60" preserveAspectRatio="none" viewBox="0 0 1440 120" style="position: absolute; bottom: 0;">
+                <path fill="#D1F2EB" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+            </svg>
+        </div>
             <!-- River Waves SVG -->
             <svg width="100%" height="60" preserveAspectRatio="none" viewBox="0 0 1440 120" style="position: absolute; bottom: 0;">
                 <path fill="#D1F2EB" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
