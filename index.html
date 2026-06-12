@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>永豐餘幸福+ | 2026端午立蛋挑戰🥚</title>
+    <title>蛋站驚心</title>
     <style>
         :root {
             --mint-green: #e8f5e9;
@@ -280,7 +280,6 @@
             </h1>
             <div style="font-size: 0.95rem; line-height: 1.6; color: var(--dbf-teal); margin-bottom: 25px; font-weight: 500;">
                 擺動手機，將蛋蛋穩在虛線框中心吧！<br>
-                看看你能否成為立蛋大師？
             </div>
             <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
         </div>
@@ -432,7 +431,7 @@
                 if (duration <= 6) { // Branching logic for 6 seconds
                     currentResultPath = './eggcalm.jpg';
                     resultImg.src = currentResultPath;
-                    resultText.innerText = "祝福端午佳節愉快";
+                    resultText.innerText = "端午佳節愉快";
                     resultSubtext.innerText = "蛋定大師在此，好運一整年！";
                 } else {
                     currentResultPath = './loosegg.jpg';
@@ -486,7 +485,7 @@
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('成就文字與連結已複製！快傳給 LINE 好友吧！');
+            alert('趕快分享給好友吧！');
         }
 
         document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
