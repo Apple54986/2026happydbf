@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>端午節 蛋顫驚心🥚</title>
+    <title>端午節 蛋站驚心🥚</title>
     <style>
         :root {
             --mint-green: #e8f5e9;
@@ -174,10 +174,10 @@
     <!-- Start Overlay -->
     <div id="start-overlay" class="overlay">
         <h1 style="margin-bottom: 5px;">你是哪種蛋？</h1>
-        <h2 style="font-weight: 300; margin-top: 0;">端午節 蛋顫驚心🥚</h2>
+        <h2 style="font-weight: 300; margin-top: 0;">端午節 蛋站驚心🥚</h2>
         <div style="font-size: 0.9rem; line-height: 1.6; color: #666; margin-bottom: 20px;">
             擺動手機，將蛋蛋移至虛線框中心。<br>
-            需<b>穩住 2 秒</b>才算成功唷！
+            需<b>穩住 1 秒</b>才算成功唷！
         </div>
         <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
     </div>
@@ -201,7 +201,7 @@
         <img id="result-image" src="" alt="Result" class="result-img">
         <div id="result-text" class="result-title"></div>
         <div id="result-subtext" style="margin-bottom: 20px; color: #666;"></div>
-        <button class="btn" onclick="shareResult()">[ 分享祝福給朋友吧 ]</button>
+        <button class="btn" onclick="shareResult()">[分享祝福給朋友]</button>
         <button class="btn" style="background: #999;" onclick="location.reload()">再玩一次</button>
     </div>
 
@@ -234,7 +234,7 @@
                 DeviceOrientationEvent.requestPermission()
                     .then(response => {
                         if (response === 'granted') startGame();
-                        else alert('需要感應器權限才能玩唷！');
+                        else alert('需要權限才能玩唷！');
                     })
                     .catch(console.error);
             } else {
@@ -331,8 +331,8 @@
 
         // 分享邏輯：優先嘗試分享圖片檔案
         async function shareResult() {
-            const title = "端午節 蛋顫驚心挑戰成功！";
-            const text = "我成功立蛋了！送你一張端午祝福圖，快來挑戰！";
+            const title = "端午節 蛋站驚心挑戰成功！";
+            const text = "我成功立蛋啦！分享端午祝福圖，快來挑戰！";
             
             if (currentResultPath === "") {
                 alert("挑戰成功後才能分享唷！");
