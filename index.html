@@ -11,11 +11,13 @@
             --sky-blue: #e0f7fa;
             --accent-gold: #ffd700;
             --text-dark: #2e7d32;
+            --success-gold: #fb8c00;
         }
 
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none;
         }
 
         body, html {
@@ -29,7 +31,6 @@
             color: var(--text-dark);
         }
 
-        /* Abstract Bamboo Background */
         .bg-leaf {
             position: absolute;
             width: 300px;
@@ -39,11 +40,9 @@
             transform: rotate(-15deg);
             z-index: 0;
         }
-
         .leaf-1 { top: 10%; left: -50px; }
         .leaf-2 { bottom: 15%; right: -50px; transform: rotate(165deg); }
 
-        /* UI Elements */
         #game-ui {
             position: relative;
             z-index: 10;
@@ -61,7 +60,6 @@
             display: inline-block;
         }
 
-        /* The Egg and Frame */
         #stage {
             position: absolute;
             top: 0;
@@ -80,6 +78,15 @@
             border: 3px dashed var(--bamboo-green);
             border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
             opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        /* 當蛋在框內時的發光效果 */
+        #egg-frame.holding {
+            border: 4px solid var(--success-gold);
+            box-shadow: 0 0 20px rgba(251, 140, 0, 0.4);
+            opacity: 1;
+            transform: scale(1.05);
         }
 
         #egg {
@@ -90,14 +97,21 @@
             border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
             box-shadow: inset -10px -10px 20px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.1);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
-            transition: transform 0.05s linear;
             z-index: 6;
+            pointer-events: none;
         }
 
-        /* Overlays */
+        .egg-face {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #555;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
         .overlay {
             position: fixed;
             top: 0;
@@ -123,32 +137,32 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(129, 199, 132, 0.4);
-            margin-top: 20px;
+            margin-top: 15px;
+            width: 80%;
+            max-width: 250px;
         }
 
         #result-screen { display: none; }
 
         .result-img {
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
             border-radius: 20px;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .result-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 900;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
-        /* Animations */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-
         .pulse { animation: pulse 2s infinite ease-in-out; }
     </style>
 </head>
@@ -159,13 +173,13 @@
 
     <!-- Start Overlay -->
     <div id="start-overlay" class="overlay">
-        <h1 style="margin-bottom: 10px;"你是哪種蛋</h1>
+        <h1 style="margin-bottom: 5px;">你是哪種蛋？</h1>
         <h2 style="font-weight: 300; margin-top: 0;">端午節 蛋顫驚心🥚</h2>
-        <div style="font-size: 0.9rem; line-height: 1.6; color: #666;">
+        <div style="font-size: 0.9rem; line-height: 1.6; color: #666; margin-bottom: 20px;">
             擺動手機，將蛋蛋移至虛線框中心。<br>
-            趕快來立蛋！
+            需<b>穩住 2 秒</b>才算成功唷！
         </div>
-        <button class="btn pulse" onclick="requestPermissions()">開始來挑戰</button>
+        <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
     </div>
 
     <!-- Game UI -->
@@ -176,35 +190,38 @@
     <!-- Stage -->
     <div id="stage">
         <div id="egg-frame"></div>
-        <div id="egg">🥚</div>
+        <div id="egg">
+            <span style="font-size: 2rem;">🥚</span>
+            <span class="egg-face">*￣v￣*</span>
+        </div>
     </div>
 
     <!-- Result Screen -->
     <div id="result-screen" class="overlay">
         <img id="result-image" src="" alt="Result" class="result-img">
         <div id="result-text" class="result-title"></div>
-        <div id="result-subtext" style="margin-bottom: 20px;"></div>
-        <button class="btn" onclick="shareGame()">[ 分享給好友 ]</button>
-        <button class="btn" style="background: #ccc;" onclick="location.reload()">再玩一次</button>
+        <div id="result-subtext" style="margin-bottom: 20px; color: #666;"></div>
+        <button class="btn" onclick="shareResult()">[ 分享祝福給朋友吧 ]</button>
+        <button class="btn" style="background: #999;" onclick="location.reload()">再玩一次</button>
     </div>
 
     <script>
-        // Game Constants & State
         const TIMER_TOTAL = 10;
+        const HOLD_DURATION = 2000; // 2 seconds in ms
         let timeLeft = TIMER_TOTAL;
         let gameActive = false;
         let timerInterval;
         let startTime;
+        let stayStartTime = null; 
+        let currentResultPath = "";
 
-        // Egg Physics State
         let eggPos = { x: 0, y: 0 };
         let eggVel = { x: 0, y: 0 };
         const friction = 0.92;
-        const sensitivity = 0.5;
-        const targetRadius = 40; // Success threshold in px
+        const sensitivity = 0.6;
 
-        // DOM Elements
         const eggEl = document.getElementById('egg');
+        const frameEl = document.getElementById('egg-frame');
         const timerEl = document.getElementById('timer');
         const startOverlay = document.getElementById('start-overlay');
         const resultScreen = document.getElementById('result-screen');
@@ -212,51 +229,41 @@
         const resultText = document.getElementById('result-text');
         const resultSubtext = document.getElementById('result-subtext');
 
-        // 1. Permission Handling for iOS
         function requestPermissions() {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(response => {
-                        if (response === 'granted') {
-                            startGame();
-                        } else {
-                            alert('需要感應器權限才能遊玩喔！');
-                        }
+                        if (response === 'granted') startGame();
+                        else alert('需要感應器權限才能玩唷！');
                     })
                     .catch(console.error);
             } else {
-                // Non-iOS or older iOS
                 startGame();
             }
         }
 
-        // 2. Game Start
         function startGame() {
             startOverlay.style.display = 'none';
             gameActive = true;
             startTime = Date.now();
             
-            // Random start position
-            const side = Math.random() > 0.5 ? 1 : -1;
-            eggPos.x = side * (window.innerWidth / 3);
-            eggPos.y = side * (window.innerHeight / 3);
+            // Random start pos
+            eggPos.x = (Math.random() - 0.5) * (window.innerWidth * 0.5);
+            eggPos.y = (Math.random() - 0.5) * (window.innerHeight * 0.5);
 
             window.addEventListener('deviceorientation', handleOrientation);
             
             timerInterval = setInterval(() => {
                 timeLeft--;
                 timerEl.innerText = timeLeft;
-                if (timeLeft <= 0) endGame(false);
+                if (timeLeft <= 0 && gameActive) endGame(false);
             }, 1000);
 
             updatePhysics();
         }
 
-        // 3. Physics Loop
         function handleOrientation(event) {
             if (!gameActive) return;
-            // Gamma: Left/Right (-90 to 90)
-            // Beta: Front/Back (-180 to 180)
             eggVel.x += event.gamma * sensitivity;
             eggVel.y += event.beta * sensitivity;
         }
@@ -266,84 +273,108 @@
 
             eggVel.x *= friction;
             eggVel.y *= friction;
-            eggPos.x += eggVel.x * 0.1;
-            eggPos.y += eggVel.y * 0.1;
+            eggPos.x += eggVel.x * 0.15;
+            eggPos.y += eggVel.y * 0.15;
 
-            // Boundaries
+            // Constrain
             const limitX = window.innerWidth / 2 - 50;
             const limitY = window.innerHeight / 2 - 70;
             if (Math.abs(eggPos.x) > limitX) eggPos.x = Math.sign(eggPos.x) * limitX;
             if (Math.abs(eggPos.y) > limitY) eggPos.y = Math.sign(eggPos.y) * limitY;
 
-            // Apply Visuals
             eggEl.style.transform = `translate(${eggPos.x}px, ${eggPos.y}px)`;
 
-            // Check Success Condition (Egg is at center frame)
+            // 2-second hold logic
             const dist = Math.sqrt(eggPos.x * eggPos.x + eggPos.y * eggPos.y);
-            if (dist < 15) {
-                endGame(true);
+            if (dist < 25) {
+                if (!stayStartTime) {
+                    stayStartTime = Date.now();
+                    frameEl.classList.add('holding');
+                } else if (Date.now() - stayStartTime >= HOLD_DURATION) {
+                    endGame(true);
+                    return;
+                }
             } else {
-                requestAnimationFrame(updatePhysics);
+                stayStartTime = null;
+                frameEl.classList.remove('holding');
             }
+
+            requestAnimationFrame(updatePhysics);
         }
 
-        // 4. End Game Logic
         function endGame(success) {
             gameActive = false;
             clearInterval(timerInterval);
             window.removeEventListener('deviceorientation', handleOrientation);
 
             const duration = (Date.now() - startTime) / 1000;
+            resultScreen.style.display = 'flex';
 
             if (success) {
-                resultScreen.style.display = 'flex';
                 if (duration <= 5) {
-                    // FAST CLEAR
-                    resultImg.src = './eggcalm.jpg';
+                    currentResultPath = './eggcalm.jpg';
+                    resultImg.src = currentResultPath;
                     resultText.innerText = "祝福端午佳節愉快";
-                    resultSubtext.innerText = "蛋定大師在此！";
+                    resultSubtext.innerText = "蛋定大師在此，好運一整年！";
                 } else {
-                    // SLOW CLEAR
-                    resultImg.src = './loosegg.jpg';
+                    currentResultPath = './loosegg.jpg';
+                    resultImg.src = currentResultPath;
                     resultText.innerText = "立蛋成功！";
-                    resultSubtext.innerText = "放假就是要盡情放粽，享受節日！";
+                    resultSubtext.innerText = "連假就是要盡情放粽，享受節日！";
                 }
             } else {
-                // TIMEOUT
-                resultScreen.style.display = 'flex';
-                resultText.innerText = "哎呀，蛋倒了！";
-                resultSubtext.innerText = "別灰心，端午靈氣還在，再試一次吧！";
                 resultImg.style.display = 'none';
+                resultText.innerText = "挑戰失敗...";
+                resultSubtext.innerText = "沒關係，，再試一次！";
             }
         }
 
-        // 5. Sharing Logic
-        function shareGame() {
-            const shareData = {
-                title: '端午節 蛋顫驚心',
-                text: '我剛完成了端午立蛋挑戰！快來看看你的平衡感好不好？',
-                url: window.location.href
-            };
+        // 分享邏輯：優先嘗試分享圖片檔案
+        async function shareResult() {
+            const title = "端午節 蛋顫驚心挑戰成功！";
+            const text = "我成功立蛋了！送你一張端午祝福圖，快來挑戰！";
+            
+            if (currentResultPath === "") {
+                alert("挑戰成功後才能分享唷！");
+                return;
+            }
 
-            if (navigator.share) {
-                navigator.share(shareData).catch(() => copyToClipboard());
-            } else {
-                copyToClipboard();
+            try {
+                // 嘗試獲取圖片並轉換為 File 物件進行分享
+                const response = await fetch(currentResultPath);
+                const blob = await response.blob();
+                const file = new File([blob], currentResultPath.split('/').pop(), { type: blob.type });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: title,
+                        text: text,
+                    });
+                } else {
+                    // 不支援檔案分享則分享連結
+                    await navigator.share({
+                        title: title,
+                        text: text,
+                        url: window.location.href
+                    });
+                }
+            } catch (err) {
+                copyToClipboard(text);
             }
         }
 
-        function copyToClipboard() {
+        function copyToClipboard(text) {
             const el = document.createElement('textarea');
-            el.value = window.location.href;
+            el.value = text + " " + window.location.href;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('網址已複製，快分享給 LINE 好友吧！');
+            alert('成就文字與連結已複製！快傳給 LINE 好友吧！');
         }
 
-        // Prevent scrolling in LINE browser
-        document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
+        document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
 </html>
