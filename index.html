@@ -176,8 +176,7 @@
         <h1 style="margin-bottom: 5px;">你是哪種蛋？</h1>
         <h2 style="font-weight: 300; margin-top: 0;">端午節 蛋站驚心🥚</h2>
         <div style="font-size: 0.9rem; line-height: 1.6; color: #666; margin-bottom: 20px;">
-            擺動手機，將蛋蛋移至虛線框中心。<br>
-            需<b>穩住 1 秒</b>才算成功唷！
+            擺動手機，將蛋蛋移至虛線框中心吧。<br>
         </div>
         <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
     </div>
@@ -191,8 +190,8 @@
     <div id="stage">
         <div id="egg-frame"></div>
         <div id="egg">
-            <span style="font-size: 2rem;">🥚</span>
-            <span class="egg-face">*￣v￣*</span>
+            <span style="font-size: 2rem;">*￣v￣*</span>
+            <span class="egg-face">✌  </span>
         </div>
     </div>
 
@@ -207,7 +206,7 @@
 
     <script>
         const TIMER_TOTAL = 10;
-        const HOLD_DURATION = 500; // 0.5 seconds in ms
+        const HOLD_DURATION = 700; // 0.7 seconds in ms
         let timeLeft = TIMER_TOTAL;
         let gameActive = false;
         let timerInterval;
@@ -311,7 +310,7 @@
             resultScreen.style.display = 'flex';
 
             if (success) {
-                if (duration <= 6) {
+                if (duration <= 5) {
                     currentResultPath = './eggcalm.jpg';
                     resultImg.src = currentResultPath;
                     resultText.innerText = "祝福端午佳節愉快";
