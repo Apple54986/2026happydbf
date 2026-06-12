@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>端午節 蛋站驚心🥚</title>
+    <title>永豐餘幸福+ | 2026端午立蛋挑戰🥚</title>
     <style>
         :root {
             --mint-green: #e8f5e9;
@@ -12,6 +12,11 @@
             --accent-gold: #ffd700;
             --text-dark: #2e7d32;
             --success-gold: #fb8c00;
+            /* New Festive Colors */
+            --dbf-mint: #A3E4D7;
+            --dbf-mint-light: #D1F2EB;
+            --dbf-teal: #0E6251;
+            --dbf-river: #EBF5FB;
         }
 
         * {
@@ -31,6 +36,7 @@
             color: var(--text-dark);
         }
 
+        /* --- Global Background Decorations --- */
         .bg-leaf {
             position: absolute;
             width: 300px;
@@ -43,6 +49,91 @@
         .leaf-1 { top: 10%; left: -50px; }
         .leaf-2 { bottom: 15%; right: -50px; transform: rotate(165deg); }
 
+        /* --- Start Screen (Cover) Specific Styles --- */
+        #start-overlay {
+            background: linear-gradient(180deg, var(--dbf-mint-light) 0%, #ffffff 100%);
+            overflow: hidden;
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cover-brand {
+            font-size: 1.1rem;
+            color: var(--dbf-teal);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .cover-title {
+            font-size: 1.8rem;
+            color: var(--dbf-teal);
+            margin: 0 0 15px 0;
+            font-weight: 900;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-egg-icon {
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            border: 2px solid var(--dbf-teal);
+            display: inline-block;
+            box-shadow: 2px 2px 0px var(--bamboo-green);
+        }
+
+        /* Festive Decorations */
+        .bamboo-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .svg-leaf {
+            position: absolute;
+            fill: var(--bamboo-green);
+            opacity: 0.4;
+        }
+
+        .river-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120px;
+            z-index: 2;
+        }
+
+        .dragon-boat {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            animation: boatFloat 3s infinite ease-in-out;
+        }
+
+        @keyframes boatFloat {
+            0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
+            50% { transform: translate(-50%, -5px) rotate(1deg); }
+        }
+
+        /* --- Game Elements --- */
         #game-ui {
             position: relative;
             z-index: 10;
@@ -81,7 +172,6 @@
             transition: all 0.3s ease;
         }
 
-        /* 當蛋在框內時的發光效果 */
         #egg-frame.holding {
             border: 4px solid var(--success-gold);
             box-shadow: 0 0 20px rgba(251, 140, 0, 0.4);
@@ -129,18 +219,22 @@
         }
 
         .btn {
-            background: var(--bamboo-green);
+            background: var(--dbf-teal);
             color: white;
             border: none;
             padding: 15px 40px;
             font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(129, 199, 132, 0.4);
+            box-shadow: 0 5px 15px rgba(14, 98, 81, 0.3);
             margin-top: 15px;
-            width: 80%;
-            max-width: 250px;
+            width: 85%;
+            max-width: 260px;
+            font-weight: 600;
+            transition: transform 0.2s;
         }
+
+        .btn:active { transform: scale(0.95); }
 
         #result-screen { display: none; }
 
@@ -171,14 +265,42 @@
     <div class="bg-leaf leaf-1"></div>
     <div class="bg-leaf leaf-2"></div>
 
-    <!-- Start Overlay -->
+    <!-- Start Overlay (Redesigned) -->
     <div id="start-overlay" class="overlay">
-        <h1 style="margin-bottom: 5px;">你是哪種蛋？</h1>
-        <h2 style="font-weight: 300; margin-top: 0;">端午節 蛋站驚心🥚</h2>
-        <div style="font-size: 0.9rem; line-height: 1.6; color: #666; margin-bottom: 20px;">
-            擺動手機，將蛋蛋移至虛線框中心吧。<br>
+        <!-- SVG Bamboo Decoration -->
+        <div class="bamboo-frame">
+            <svg class="svg-leaf" style="top: -20px; left: -20px; width: 150px; transform: rotate(10deg);" viewBox="0 0 100 100"><path d="M10,90 Q50,0 90,90 T10,90" /></svg>
+            <svg class="svg-leaf" style="top: 20px; right: -40px; width: 120px; transform: rotate(-30deg);" viewBox="0 0 100 100"><path d="M10,90 Q50,0 90,90 T10,90" /></svg>
         </div>
-        <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
+
+        <div class="cover-content">
+            <div class="cover-brand">永豐餘幸福+</div>
+            <h1 class="cover-title">
+                2026 端午立蛋挑戰 <span class="title-egg-icon"></span>
+            </h1>
+            <div style="font-size: 0.95rem; line-height: 1.6; color: var(--dbf-teal); margin-bottom: 25px; font-weight: 500;">
+                擺動手機，將蛋蛋穩在虛線框中心吧！<br>
+                看看你能否成為立蛋大師？
+            </div>
+            <button class="btn pulse" onclick="requestPermissions()">開始挑戰</button>
+        </div>
+
+        <!-- River and Dragon Boat -->
+        <div class="river-container">
+            <!-- Simple Minimalist Dragon Boat SVG -->
+            <svg class="dragon-boat" viewBox="0 0 200 60">
+                <path d="M10,40 Q100,60 190,40 L180,30 Q100,45 20,30 Z" fill="#0E6251" /> <!-- Hull -->
+                <path d="M185,45 Q200,10 175,25" fill="none" stroke="#0E6251" stroke-width="4" /> <!-- Head -->
+                <circle cx="188" cy="28" r="2" fill="#ffd700" /> <!-- Eye -->
+                <rect x="50" y="35" width="2" height="15" fill="#81c784" /> <!-- Oars -->
+                <rect x="80" y="35" width="2" height="15" fill="#81c784" />
+                <rect x="110" y="35" width="2" height="15" fill="#81c784" />
+            </svg>
+            <!-- River Waves SVG -->
+            <svg width="100%" height="60" preserveAspectRatio="none" viewBox="0 0 1440 120" style="position: absolute; bottom: 0;">
+                <path fill="#D1F2EB" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+            </svg>
+        </div>
     </div>
 
     <!-- Game UI -->
@@ -190,7 +312,6 @@
     <div id="stage">
         <div id="egg-frame"></div>
         <div id="egg">
-            <span style="font-size: 2rem;">   </span>
             <span class="egg-face">*￣v￣*</span>
         </div>
     </div>
@@ -205,6 +326,7 @@
     </div>
 
     <script>
+        // --- JAVASCRIPT LOGIC (REMAINING UNCHANGED) ---
         const TIMER_TOTAL = 10;
         const HOLD_DURATION = 700; // 0.7 seconds in ms
         let timeLeft = TIMER_TOTAL;
@@ -246,7 +368,6 @@
             gameActive = true;
             startTime = Date.now();
             
-            // Random start pos
             eggPos.x = (Math.random() - 0.5) * (window.innerWidth * 0.5);
             eggPos.y = (Math.random() - 0.5) * (window.innerHeight * 0.5);
 
@@ -275,7 +396,6 @@
             eggPos.x += eggVel.x * 0.15;
             eggPos.y += eggVel.y * 0.15;
 
-            // Constrain
             const limitX = window.innerWidth / 2 - 50;
             const limitY = window.innerHeight / 2 - 70;
             if (Math.abs(eggPos.x) > limitX) eggPos.x = Math.sign(eggPos.x) * limitX;
@@ -283,7 +403,6 @@
 
             eggEl.style.transform = `translate(${eggPos.x}px, ${eggPos.y}px)`;
 
-            // 2-second hold logic
             const dist = Math.sqrt(eggPos.x * eggPos.x + eggPos.y * eggPos.y);
             if (dist < 25) {
                 if (!stayStartTime) {
@@ -310,7 +429,7 @@
             resultScreen.style.display = 'flex';
 
             if (success) {
-                if (duration <= 5) {
+                if (duration <= 6) { // Branching logic for 6 seconds
                     currentResultPath = './eggcalm.jpg';
                     resultImg.src = currentResultPath;
                     resultText.innerText = "祝福端午佳節愉快";
@@ -324,11 +443,10 @@
             } else {
                 resultImg.style.display = 'none';
                 resultText.innerText = "挑戰失敗...";
-                resultSubtext.innerText = "沒關係，，再試一次！";
+                resultSubtext.innerText = "沒關係，再試一次！";
             }
         }
 
-        // 分享邏輯：優先嘗試分享圖片檔案
         async function shareResult() {
             const title = "端午節 蛋站驚心挑戰成功！";
             const text = "我成功立蛋啦！分享端午祝福圖，快來挑戰！";
@@ -339,7 +457,6 @@
             }
 
             try {
-                // 嘗試獲取圖片並轉換為 File 物件進行分享
                 const response = await fetch(currentResultPath);
                 const blob = await response.blob();
                 const file = new File([blob], currentResultPath.split('/').pop(), { type: blob.type });
@@ -351,7 +468,6 @@
                         text: text,
                     });
                 } else {
-                    // 不支援檔案分享則分享連結
                     await navigator.share({
                         title: title,
                         text: text,
