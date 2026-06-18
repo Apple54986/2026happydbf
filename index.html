@@ -317,7 +317,7 @@
 
     <!-- Game UI -->
     <div id="game-ui">
-        <div class="timer-display">剩餘時間: <span id="timer">10</span>s</div>
+        <div class="timer-display">剩餘時間: <span id="timer">15</span>s</div>
     </div>
 
     <!-- Stage -->
@@ -339,7 +339,7 @@
 
     <script>
         // --- JAVASCRIPT LOGIC (REMAINING UNCHANGED) ---
-        const TIMER_TOTAL = 10;
+        const TIMER_TOTAL = 15;
         const HOLD_DURATION = 500; // 0.5 seconds in ms
         let timeLeft = TIMER_TOTAL;
         let gameActive = false;
@@ -441,7 +441,7 @@
             resultScreen.style.display = 'flex';
 
             if (success) {
-                if (duration <= 6) { // Branching logic for 6 seconds
+                if (duration <= 7) { // Branching logic for 7 seconds
                     currentResultPath = './eggcalm.jpg';
                     resultImg.src = currentResultPath;
                     resultText.innerText = "端午佳節愉快";
